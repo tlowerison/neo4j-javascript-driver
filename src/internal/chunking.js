@@ -106,8 +106,10 @@ class Chunker extends BaseBuffer {
   /** Ensure at least the given size is available for writing */
   _ensure (size) {
     const toWriteSize = this._chunkOpen ? size : size + _CHUNK_HEADER_SIZE
-    if (this._buffer.remaining() < toWriteSize) {
+    if (this._buffer && this._buffer.remaining() < toWriteSize) {
       this.flush()
+    } else if (!this._buffer) {
+      this._buffer = alloc(this._bufferSize)
     }
 
     if (!this._chunkOpen) {
